@@ -32,6 +32,27 @@ def add_student():
     cursor.close()
     return jsonify({"message": "User created"}), 201
 
+# view all 
+@app.route('/view', methods=['GET'])
+def view_students():
+    cursor = con.cursor()
+    cursor.execute("SELECT * FROM students")
+    students = cursor.fetchall()
+    cursor.close()
+    students_list = []
+    for student in students:
+        students_list.append({
+            'id': student[0],
+            'name': student[1],
+            'email': student[2],
+            'department': student[3]
+        })
+    return jsonify(students), 200
+
+
+
+
+
 
 if __name__ == '__main__':
     app.run(debug=True)
