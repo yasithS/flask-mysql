@@ -49,9 +49,42 @@ def view_students():
         })
     return jsonify(students), 200
 
-
-
-
+# view by id
+@app.route('/view/<int:id>', methods=['GET'])
+def view_by_id(id):
+    cursor = con.cursor()
+    cursor.execute("SELECT * FROM students WHERE id=%s", (id,))
+    student = cursor.fetchone()
+    cursor.close()
+    if student:
+        return jsonify({
+            'id': student[0],
+            'name': student[1],
+            'email': student[2],
+            'department': student[3]
+        }), 200
+    else:
+        return jsonify({"message": "Student not found"}), 404
+    
+# update 
+@app.route('/update/<int:id>', methods=['PUT'])
+def update_student(id):
+    cursor = con.cursor()
+    cursor.execute("SELECT * FROM students WHERE id=%s", (id,))
+    student = cursor.fetchone()
+    cursor.close()
+    if student: 
+        data = request.get_json()
+        name = data['name']
+        email = data['email']
+        department = data['department']
+        cursor = con.cursor()
+        cursor.execute("UPDATE students SET name=%s, email=%s ,department=%s WHERE id=%s", (name, email, department, id,))
+        con.commit()
+        cursor.close()
+        return jsonify({"message": "User updated"}), 200
+    else: 
+        return jsonify({"message": "Student not found"}), 404
 
 
 if __name__ == '__main__':
