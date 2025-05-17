@@ -85,6 +85,22 @@ def update_student(id):
         return jsonify({"message": "User updated"}), 200
     else: 
         return jsonify({"message": "Student not found"}), 404
+    
+#delete 
+@app.route('/delete/<int:id>', methods=['DELETE'])
+def delete_student(id):
+    cursor = con.cursor()
+    cursor.execute("SELECT * FROM students WHERE id=%s", (id,))
+    student = cursor.fetchone()
+    cursor.close()
+    if student:
+        cursor = con.cursor()
+        cursor.execute("DELETE FROM students WHERE id=%s", (id,))
+        con.commit()
+        cursor.close()
+        return jsonify({"message": "User deleted"}), 200
+    else: 
+        return jsonify({"message": "student not found"}), 404
 
 
 if __name__ == '__main__':
